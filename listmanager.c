@@ -1,9 +1,19 @@
 #include "listmanager.h"
 
 typedef struct task{
-char *todo;
-int id;
-struct task *next;
+    /*
+     * the full but not used paramters of 
+     * task structure
+     */
+    int id;
+    char *todo;
+    struct tm tasks_reminder_time;
+    struct tm task_creation_time;
+    struct tm task_done_time;
+    uint8_t archive;
+    RemindFreq remind_freq;    
+    struct task *next;
+
 }task;
 
 task *head = NULL;
