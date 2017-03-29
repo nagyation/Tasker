@@ -1,11 +1,15 @@
-#ifndef __MEMTASKER__
-#define __MEMTASKER__
+#ifndef __LISTMANAGER__
+#define __LISTMANAGER__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <stdint.h>
+#include <ctype.h>
+#define NOT_ARCHIVE 0
+#define ARCHIVE 1
+
 enum RemindFreq{
     ONCE,
     DAILY,
@@ -13,8 +17,9 @@ enum RemindFreq{
     MONTHLY,
     YEARLY
 };
-void add_task(const char *,size_t );
+void add_task(const char *,size_t,struct tm,enum RemindFreq,uint8_t);
 void print_all_tasks();
-int remove_task_by_id(int );
-
+int remove_task_by_id(int);
+int get_reminder_format(char *,struct tm *);
+int get_frequent_reminder(char *,enum RemindFreq *);
 #endif
