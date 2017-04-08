@@ -11,7 +11,7 @@ typedef struct task{
     char *todo;
     struct tm tasks_reminder_time;
     struct tm task_creation_time;
-    struct tm task_done_time;
+    struct tm task_finished_time;
     uint8_t archive;
     uint8_t has_reminder;
     enum RemindFreq remind_freq;    
