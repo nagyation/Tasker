@@ -1,23 +1,7 @@
-#include "listmanager.h"
+#include "taskmanager.h"
 
 #define CMP_IF_ZERO(A,B) A? A:B
 
-typedef struct task{
-    /*
-     * the full but not used paramters of 
-     * task structure
-     */
-    int id;
-    char *todo;
-    struct tm tasks_reminder_time;
-    struct tm task_creation_time;
-    struct tm task_finished_time;
-    uint8_t archive;
-    uint8_t has_reminder;
-    enum RemindFreq remind_freq;    
-    struct task *next;
-
-}task;
 
 task *__head = NULL;
 task *__current = NULL;
