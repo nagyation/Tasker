@@ -23,7 +23,7 @@ enum RemindFreq{
 
 typedef struct task{
    
-    int id;
+    long id;
     char *todo;
     struct tm reminder_time;
     struct tm creation_time;
@@ -37,6 +37,6 @@ typedef struct task{
 task * create_task(const char *todo,size_t n,struct tm reminder, enum RemindFreq remind_freq, uint8_t set_reminder);
 int get_reminder_format(char *,struct tm *);
 int get_frequent_reminder(char *,enum RemindFreq *);
-void get_formated_timestamp(char *,struct tm);
+char * get_formated_timestamp(struct tm *);
 
 #endif

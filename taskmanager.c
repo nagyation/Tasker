@@ -15,19 +15,19 @@ struct tm __get_localetime(){
 }
 
 
-void get_formated_timestamp(char * buffer,struct tm timestamp){
+char *get_formated_timestamp(struct tm *timestamp){
 
 /*
 
 format tm to formated string that can be used with sqlite timestamp
-@buffer: the string buffer to return the string in
 @timestamp: the desired time to format
 
 */
-
-    buffer = (char*) realloc(buffer, sizeof(char)*30);
-    strftime(buffer, 30, "%Y-%m-%d %H:%M",&timestamp);
-
+    if (!timestamp || timestamp->tm_year == 0) // default year means the time stamp isn't intialized
+	return NULL;
+    char * buffer = (char *) malloc(sizeof(char)*30);
+    strftime(buffer, 30, "%Y-%m-%d %H:%M",timestamp);
+    return buffer;
 }
 
 

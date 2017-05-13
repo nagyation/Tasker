@@ -36,7 +36,7 @@ int intialize_tasks_table(){
   callback_function: callback_function used with the executions
  */
 int intialize_db(char *name, int (*callback_function) (void *, int , char **, char **)){
-  callback = callback_function;
+    callback = callback_function;
   int rc;
     rc = sqlite3_open(name,&db);
     if( rc )
@@ -68,13 +68,12 @@ int get_all_tasks(){
 
 int insert_task(task tsk){
   char *sql;
-  sql  = (char*) malloc(sizeof(char)*300 + strlen(tsk.todo);
+  sql  = (char*) malloc(sizeof(char)*(300 + strlen(tsk.todo)));
   int rc;
-   sprintf(sql ,"INSERT INTO TASKS (TODO,CREATION_TIME,FINISHED_TIME,REMINDER_TIME,ARCHIVE,HAS_REMINDER,REMINDER_FREQ) " \
-	   "VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%d\",\"%d\",\"%d\");",tsk.todo,tsk.creation_time,tsk.finished_time,tsk.reminder_time,tsk.archive,tsk.has_reminder,tsk.remind_freq);
+   sprintf(sql ,"INSERT INTO TASKS (TODO,REMINDER_TIME,ARCHIVE,HAS_REMINDER,REMINDER_FREQ) " \
+	   "VALUES (\"%s\",\"%s\",\"%d\",\"%d\",\"%d\");",tsk.todo,get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq);
     rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
     printf("%s",sql);
-    free(sql);
     if( rc != SQLITE_OK )
       {
 	printf("\n %s",err_msg);
@@ -91,10 +90,10 @@ int insert_task(task tsk){
 int edit_task(task tsk){
 char *sql;
   int rc;
-  sql =(char*) malloc(sizeof(char)*300 + strlen(tsk.todo));
-  sprintf(sql , "UPDATE TASKS set TODO =\"%s\",CREATION_TIME=\"%s\",FINISHED_TIME=\"%s\",REMINDER_TIME=\"%s\",ARCHIVE=%d,HAS_REMINDER=%d,REMINDER_FREQ=%d  where ID=%ld;", tsk.todo,tsk.creation_time,tsk.finished_time,tsk.reminder_time,tsk.archive,tsk.has_reminder,tsk.remind_freq,tsk.id);
+  sql =(char*) malloc(sizeof(char)*100 + sizeof(char)*strlen(tsk.todo));
+  sprintf(sql , "UPDATE TASKS set TODO =\"%s\",CREATION_TIME=\"%s\",FINISHED_TIME=\"%s\",REMINDER_TIME=\"%s\",ARCHIVE=%d,HAS_REMINDER=%d,REMINDER_FREQ=%d  where ID=%ld;", tsk.todo,get_formated_timestamp(&tsk.creation_time),get_formated_timestamp(&tsk.finished_time),get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq,tsk.id);
       rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
-    if( rc != SQLITE_OK )
+      if( rc != SQLITE_OK )
       {
 	printf("%s",err_msg);
 	sqlite3_free(err_msg);
