@@ -18,9 +18,9 @@ int intialize_tasks_table(){
   sql = "CREATE TABLE IF NOT EXISTS TASKS ("		 \
          "ID INTEGER PRIMARY KEY  AUTOINCREMENT   NOT NULL," \
          "TODO           TEXT    NOT NULL," \
-         "CREATION_TIME  TEXT   NOT NULL," \
-         "FINISHED_TIME  TEXT   ," \
-         "REMINDER_TIME  TEXT   ," \
+         "CREATION_TIME  DATETIME DEFAULT CURRENT_TIMESTAMP," \
+         "FINISHED_TIME  DATETIME   ," \
+         "REMINDER_TIME  DATETIME   ," \
          "ARCHIVE        INT    default    0," \
          "HAS_REMINDER   INT    NOT NULL,"\
          "REMINDER_FREQ  INT    NOT NULL);";

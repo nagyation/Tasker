@@ -3,57 +3,66 @@
 #define CMP_IF_ZERO(A,B) A? A:B
 
 
-task *__head = NULL;
-task *__current = NULL;
-int __tasks_counter = 1;
-
 struct tm __get_localetime(){
+
+/*
+  Return: the current time
+ */
+
     time_t t = time(NULL);
     struct tm time = *localtime(&t);
     return time;
 }
-void __init_task(task *p,const char *todo,size_t n,struct tm reminder, enum RemindFreq remind_freq, uint8_t set_reminder){
-        p->todo= (char*) malloc(sizeof(char)*n);
-        strcpy(p->todo,todo);
-        p->task_creation_time = __get_localetime();
-        p->archive = NOT_ARCHIVE;
-        if(set_reminder)
-            p->tasks_reminder_time = reminder;
-        p->has_reminder = set_reminder;
-        p->remind_freq = remind_freq; 
-        p->id = __tasks_counter++;
-        p->next = NULL;
+
+
+void get_formated_timestamp(char * buffer,struct tm timestamp){
+
+/*
+
+format tm to formated string that can be used with sqlite timestamp
+@buffer: the string buffer to return the string in
+@timestamp: the desired time to format
+
+*/
+
+    buffer = (char*) realloc(buffer, sizeof(char)*30);
+    strftime(buffer, 30, "%Y-%m-%d %H:%M",&timestamp);
 
 }
-void add_task(const char *todo,size_t n,struct tm reminder, enum RemindFreq remind_freq,uint8_t set_reminder) {
-    if(__head == NULL)
-    {  
-         
-        __head = (task*) malloc(sizeof(task));
-       __init_task(__head,todo,n,reminder,remind_freq,set_reminder); 
-        __current = __head;
-    }
-    else
-    {
-        
-        __current->next = (task*)malloc(sizeof(task));
-        __init_task(__current->next,todo,n,reminder,remind_freq,set_reminder);    
-        __current = __current->next;
+
+
+
+task * create_task(const char *todo,size_t n,struct tm reminder, enum RemindFreq remind_freq, uint8_t set_reminder){
+
+    /*
+      Return: pointer to the task created
+     */
     
-    }
-    
+    task * p = (task*) malloc(sizeof(task));
+    p->todo= (char*) malloc(sizeof(char)*n);
+    strcpy(p->todo,todo);
+    p->creation_time = __get_localetime();
+    p->archive = NOT_ARCHIVE;
+    if(set_reminder)
+	p->reminder_time = reminder;
+    p->has_reminder = set_reminder;
+    p->remind_freq = remind_freq; 
+    return p;
+
 }
-void print_all_tasks(){
+
+
+/*void print_all_tasks(){
     task *p = __head;
     while(p != NULL)
         {
             char buffer[30];
             printf("****\n%s\n -ID %d\n",p->todo,p->id);
-            strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->task_creation_time);
+            strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->creation_time);
             printf("Created at %s \n",buffer);
             if(p->has_reminder)
             {
-                 strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->tasks_reminder_time);
+                 strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->reminder_time);
                  printf("Reminder  at %s \n",buffer); 
             }
             switch(p->remind_freq)
@@ -80,58 +89,49 @@ void print_all_tasks(){
         }
 
 }
-int remove_task_by_id(int id){
-    task *p = __head;
-    if (p->id == id)
-    {   __head = __head-> next;
-        free(p);
-        return 0;
-    }
-    else{
-        while(p->next)
-    {
-        if(p->next->id == id)
-        {
-            task *t = p->next;
-            p->next = p->next->next;
-            free(t);
-            return 0;
-        }
-        p = p->next;
-    }
-    }
-return -1;
-}
 
-int get_reminder_format(char *r,struct tm *t){
-   *t = __get_localetime();
-    if(r[0] == '+') //+NF
+*/
+
+
+int get_reminder_format(char *ireminder,struct tm *reminder_time){
+    /*
+      *Takes the user input for reminder, and generate timestamp upon.
+      *it searches for two formats:
+      *--'+NF'  -- where N= duration, F= Unit (Month,Day,etc..)
+      *-- 'YYYY MM DD HH mm' the exact time, what is not found in the timestamp is added as now
+      *@ireminder : input string for reminder format
+      *@reminder_time : processed and returned timestamp for reminder
+      *@Returns: 0 for success and -1 if the format is wrong
+      */
+    
+    *reminder_time = __get_localetime();
+    if(ireminder[0] == '+') //+NF
     {
         char plus,param;
         int duration;
-        sscanf(r,"%c%d%c",&plus,&duration,&param);
+        sscanf(ireminder,"%c%d%c",&plus,&duration,&param);
         if(!duration)
             return -1;
         if(param =='\0')
             return -1;
        switch(param){
             case 'm':
-                t->tm_min += duration;    
+                reminder_time->tm_min += duration;    
                 break;
             case 'H':
-                t->tm_hour += duration;
+                reminder_time->tm_hour += duration;
                 break;
             case 'D':
-                t->tm_mday += duration;
+                reminder_time->tm_mday += duration;
                 break;
             case 'W':
-                t->tm_mday += duration * 7;
+                reminder_time->tm_mday += duration * 7;
                 break;
             case 'M':
-                t->tm_mon += duration;
+                reminder_time->tm_mon += duration;
                 break;
             case 'Y':
-                t->tm_year += duration;
+                reminder_time->tm_year += duration;
                 break;
             default:
                 return -1;
@@ -139,41 +139,54 @@ int get_reminder_format(char *r,struct tm *t){
     }
    else{
         int year,month,day,hour,min;    
-        sscanf(r,"%d %d %d %d %d",&year,&month,&day,&hour,&min);
+        sscanf(ireminder,"%d %d %d %d %d",&year,&month,&day,&hour,&min);
         if (!year && !month && !day && !hour && !min)
             return -1;
-        t->tm_year = year ? year-1900:t->tm_year;
-        t->tm_mon = month ? month-1 :t->tm_mon;
-        t->tm_mday = CMP_IF_ZERO(day,t->tm_mday);
-        t->tm_hour = CMP_IF_ZERO(hour,t->tm_hour);
+        reminder_time->tm_year = year ? year-1900:reminder_time->tm_year;
+        reminder_time->tm_mon = month ? month-1 :reminder_time->tm_mon;
+        reminder_time->tm_mday = CMP_IF_ZERO(day,reminder_time->tm_mday);
+        reminder_time->tm_hour = CMP_IF_ZERO(hour,reminder_time->tm_hour);
    }
-    mktime(t);
+    mktime(reminder_time);
     return 0;
 }
 
-int get_frequent_reminder(char * f,enum RemindFreq *r){
+
+
+
+int get_frequent_reminder(char * iremind,enum RemindFreq *remind_freq){
+    /*
+      Sets the enum according the input of the user
+      @iremind: input remind format to be processed
+      @remind_freq: returned remind_freq 
+      @Return: 0 for success , -1 for invalid format
+    */
+
     int i;
-    for(i=0; f[i] != '\0';i++)
-        f[i] = tolower(f[i]);
-    if(!strcmp(f,"once\n")){
-        *r = ONCE;
+    iremind [strlen(iremind) - 1] = 0; // removes /n character
+    
+    for(i=0; iremind[i] != '\0';i++)
+        iremind[i] = tolower(iremind[i]);  //Lowering all characters to make it general
+    
+    if(!strcmp(iremind,"once")){
+        *remind_freq = ONCE;
         return 0;
     }
-    else if(!strcmp(f,"daily\n")){
-        *r = DAILY;
+    else if(!strcmp(iremind,"daily")){
+        *remind_freq = DAILY;
         return 0;
     }
-    else if(!strcmp(f,"weekly\n"))
+    else if(!strcmp(iremind,"weekly"))
     {
-        *r = WEEKLY;
+        *remind_freq = WEEKLY;
         return 0;
     }
-    else if(!strcmp(f,"monthly\n")){
-        *r = MONTHLY;
+    else if(!strcmp(iremind,"monthly")){
+        *remind_freq = MONTHLY;
         return 0;
     }
-    else if(!strcmp(f,"yearly\n")){
-        *r = YEARLY;
+    else if(!strcmp(iremind,"yearly")){
+        *remind_freq = YEARLY;
         return 0;
     }
    return -1; 

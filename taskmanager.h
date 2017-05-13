@@ -7,6 +7,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <ctype.h>
+
 #define NOT_ARCHIVE 0
 #define ARCHIVE 1
 
@@ -21,10 +22,7 @@ enum RemindFreq{
 };
 
 typedef struct task{
-    /*
-     * the full but not used paramters of 
-     * task structure
-     */
+   
     int id;
     char *todo;
     struct tm reminder_time;
@@ -32,14 +30,13 @@ typedef struct task{
     struct tm finished_time;
     uint8_t archive;
     uint8_t has_reminder;
-    enum RemindFreq remind_freq;    
-    struct task *next;
-
+    enum RemindFreq remind_freq;
+    
 }task;
 
-void add_task(const char *,size_t,struct tm,enum RemindFreq,uint8_t);
-void print_all_tasks();
-int remove_task_by_id(int);
+task * create_task(const char *todo,size_t n,struct tm reminder, enum RemindFreq remind_freq, uint8_t set_reminder);
 int get_reminder_format(char *,struct tm *);
 int get_frequent_reminder(char *,enum RemindFreq *);
+void get_formated_timestamp(char *,struct tm);
+
 #endif
