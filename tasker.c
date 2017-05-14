@@ -1,16 +1,27 @@
 #include "taskerdb.h"
 
+
+#define GET_TASK  0
+#define PRINT_TASKS 1
+
+
 char *itxt = NULL;
 size_t itxt_size =0;
 
-static int callback(void *data, int col_len, char **cell_data, char **col_name){
-   int i;
-   fprintf(stderr, "%s: ", (const char*)data);
-   for(i=0; i<col_len; i++){
-      printf("%s = %s\n", col_name[i], cell_data[i] ? cell_data[i] : "NULL");
-   }
-   printf("\n");
-   return 0;
+static int callback(void *flag, int col_len, char **cell_data, char **col_name){
+    int i;
+    switch(*(int*)flag)
+    {
+    case PRINT_TASKS:
+	    for(i=0; i<col_len; i++){
+		printf("%s = %s\n", col_name[i], cell_data[i] ? cell_data[i] : "NULL");
+	    }
+	    printf("\n");
+	    break;
+    case GET_TASK:
+	break;
+    }
+    return 0;
 }
 
 int main(){
