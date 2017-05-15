@@ -1,8 +1,6 @@
 #include "taskerdb.h"
 
 
-
-
 char *itxt = NULL;
 size_t itxt_size =0;
 
