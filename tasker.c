@@ -1,8 +1,6 @@
 #include "taskerdb.h"
 
 
-#define GET_TASK  0
-#define PRINT_TASKS 1
 
 
 char *itxt = NULL;
