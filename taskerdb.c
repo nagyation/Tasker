@@ -57,7 +57,8 @@ int get_all_tasks(){
     int rc;
     char* sql;
     sql = "SELECT * FROM TASKS;";
-    rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
+    int flag = PRINT_TASKS;
+    rc = sqlite3_exec(db,sql,*callback,(void*)&flag,&err_msg);
     if( rc != SQLITE_OK )
       sqlite3_free(err_msg);
     else 
@@ -73,7 +74,8 @@ int get_task(long id){
     char* sql;
     sql = (char*) malloc(sizeof(char)*40);
     sprintf(sql,"SELECT * FROM TASKS WHERE ID=%ld;",id);
-    rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
+    int flag = GET_TASK;
+    rc = sqlite3_exec(db,sql,*callback,(void*)&flag,&err_msg);
     if( rc != SQLITE_OK )
       sqlite3_free(err_msg);
     else 

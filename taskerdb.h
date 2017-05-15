@@ -5,6 +5,8 @@
 #include <sqlite3.h>
 #include "taskmanager.h"
 
+#define GET_TASK  0
+#define PRINT_TASKS 1
 
 int intialize_db(char *,int (*callback_function) (void *, int , char **, char **));
 int intialize_tasks_table();
