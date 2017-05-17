@@ -1,6 +1,11 @@
 #include "taskerdb.h"
+#include "taskerscreens.h"
 
+#define GET_TASK  0
+#define PRINT_TASKS 1
+#define CMP_STR(A,B)  !strncmp(A,B,2)
 
+	   
 char *itxt = NULL;
 size_t itxt_size =0;
 
@@ -21,34 +26,36 @@ static int callback(void *flag, int col_len, char **cell_data, char **col_name){
 }
 
 int main(){
-    printf("yaaay");
+    welcome_screen();
+    help_screen();
     intialize_db("tasker.db", callback);
     intialize_tasks_table();
     task *tsk;
     tsk =(task*)  malloc(sizeof(task));
-    printf("yaaay");
     while(1){
+	printf("-> ");
         ssize_t result = getline(&itxt,&itxt_size,stdin);
-        if(result -1 < 2)
+        if(result -1 != 2)
+	{
+	    printf("wrong argument\n -h to see possible ones\n");
             continue;
-        if( !strncmp(itxt,"-q",result-1))
+	}
+        if(CMP_STR(itxt,"-q"))
             break;
-        else if ( !strncmp(itxt,"-p",result-1))
+	else if(CMP_STR(itxt, "-h"))
+	    help_screen();
+        else if (CMP_STR(itxt,"-p"))
             get_all_tasks();
-        else if ( !strncmp(itxt,"-d",result-1))
-        {   printf("Enter id you want to delete\n");
-            getline(&itxt,&itxt_size,stdin);    
-            long id;
-            if (!sscanf(itxt,"%ld",&id))
-            {   
-                printf("Surely I was waiting for a number\n");
-        
-                continue; 
-            }
+        else if (CMP_STR(itxt,"-d"))
+        {
+	    long id;
+	    id = delete_screen();
+	    if(id == -1)
+		continue;
             delete_task(id);
 	    get_all_tasks();
 	}
-        else if(!strncmp(itxt,"-t",result-1)){
+        else if(CMP_STR(itxt,"-t")){
             printf("Make yourself home \n");    
             getline(&itxt,&itxt_size,stdin); 
             char *todo = (char*)malloc(sizeof(char) *itxt_size);
