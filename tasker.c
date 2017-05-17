@@ -11,6 +11,8 @@ size_t itxt_size =0;
 
 static int callback(void *flag, int col_len, char **cell_data, char **col_name){
     int i;
+    if ( ! flag)
+	return 0;
     switch(*(int*)flag)
     {
     case PRINT_TASKS:
@@ -56,38 +58,24 @@ int main(){
 	    get_all_tasks();
 	}
         else if(CMP_STR(itxt,"-t")){
-            printf("Make yourself home \n");    
-            getline(&itxt,&itxt_size,stdin); 
-            char *todo = (char*)malloc(sizeof(char) *itxt_size);
-            strcpy(todo,itxt);
-            int todo_size = itxt_size;
-	     struct tm reminder_time;
-Set_Reminder:
-            printf("Set a Reminder?\n yyyy mm dd hh mm or\n +N(m-H-D-W-M-Y) where N is a number larger than 0 \n");
-           
-            printf("no for no reminder\n");
-            uint8_t set_reminder = 0;
-            enum RemindFreq remind_freq =  ONCE;
-            if(getline(&itxt,&itxt_size,stdin) -1 <= 2)
-                goto Add_Task;
-            
-            if (get_reminder_format(itxt,&reminder_time)) //returned -1
-            {   printf("Not a valid format\n");
-                goto Set_Reminder;
-            }
-            set_reminder = 1;
-            printf("Repeated? once-daily-weekly-monthly-yearly\n");
-            getline(&itxt,&itxt_size,stdin);
-            get_frequent_reminder(itxt,&remind_freq);
-Add_Task:
+	    
+            char *todo = NULL;
+            int todo_size = add_task_todo_screen(&todo);
+	    struct tm reminder_time;
+	    int set_reminder = -1;
+	    enum RemindFreq remind_freq;
+
+	    while(set_reminder == -1)
+		set_reminder = add_task_reminder_screen(&remind_freq, &reminder_time);
+	    
 	    tsk= create_task(todo,todo_size,reminder_time,remind_freq,set_reminder);
 	    insert_task(*tsk);
-	    printf("Done ;) \n");
+	    printf("Added :) \n");
         }
     }
     free(tsk);
     free(itxt);
-    printf("%s\n","Cya soon :)\n");
+    printf("Cya soon :)\n");
 
 }
 

@@ -90,7 +90,7 @@ int insert_task(task tsk){
    sprintf(sql ,"INSERT INTO TASKS (TODO,REMINDER_TIME,ARCHIVE,HAS_REMINDER,REMINDER_FREQ) " \
 	   "VALUES (\"%s\",\"%s\",\"%d\",\"%d\",\"%d\");",tsk.todo,get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq);
     rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
-    printf("%s",sql);
+
     if( rc != SQLITE_OK )
       {
 	printf("\n %s",err_msg);
