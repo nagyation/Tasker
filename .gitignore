@@ -5,3 +5,5 @@ tasker
 *.db
 taskerdb
 *#
+.*desktop
+.*desktop.lock

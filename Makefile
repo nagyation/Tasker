@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS= -c -Wall -g
 LDFLAGS= -l sqlite3
-SOURCES= tasker.c taskmanager.c taskerdb.c
+SOURCES= tasker.c taskmanager.c taskerdb.c taskerscreens.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=tasker
 
