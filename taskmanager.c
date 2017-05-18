@@ -26,7 +26,7 @@ format tm to formated string that can be used with sqlite timestamp
     if (!timestamp || timestamp->tm_year == 0) // default year means the time stamp isn't intialized
 	return NULL;
     char * buffer = (char *) malloc(sizeof(char)*30);
-    strftime(buffer, 30, "%Y-%m-%d %H:%M",timestamp);
+    strftime(buffer, 30, "\"%Y-%m-%d %H:%M\"",timestamp);
     return buffer;
 }
 
@@ -50,47 +50,6 @@ task * create_task(const char *todo,size_t n,struct tm reminder, enum RemindFreq
     return p;
 
 }
-
-
-/*void print_all_tasks(){
-    task *p = __head;
-    while(p != NULL)
-        {
-            char buffer[30];
-            printf("****\n%s\n -ID %d\n",p->todo,p->id);
-            strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->creation_time);
-            printf("Created at %s \n",buffer);
-            if(p->has_reminder)
-            {
-                 strftime(buffer, 30, "%Y-%m-%d %H:%M", &p->reminder_time);
-                 printf("Reminder  at %s \n",buffer); 
-            }
-            switch(p->remind_freq)
-            {   
-                case ONCE:
-                    strcpy(buffer, "Once");
-                    break;
-                case DAILY:
-                    strcpy(buffer,"Daily");
-                    break;
-                case WEEKLY:
-                    strcpy(buffer,"Weekly");
-                    break;
-                case MONTHLY:
-                    strcpy(buffer, "Monthly");
-                    break;
-                case YEARLY:
-                    strcpy(buffer, "Yearly");
-                    break;
-            }
-            printf("Repeated: %s\n",buffer);
-            printf("****\n");
-            p = p->next;
-        }
-
-}
-
-*/
 
 
 int get_reminder_format(char *ireminder,struct tm *reminder_time){

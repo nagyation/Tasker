@@ -10,16 +10,12 @@ char *itxt = NULL;
 size_t itxt_size =0;
 
 static int callback(void *flag, int col_len, char **cell_data, char **col_name){
-    int i;
     if ( ! flag)
 	return 0;
     switch(*(int*)flag)
     {
     case PRINT_TASKS:
-	    for(i=0; i<col_len; i++){
-		printf("%s = %s\n", col_name[i], cell_data[i] ? cell_data[i] : "NULL");
-	    }
-	    printf("\n");
+	print_task_screen(cell_data);
 	    break;
     case GET_TASK:
 	break;

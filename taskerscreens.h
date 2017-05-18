@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "taskmanager.h"
+#include "taskerdb.h"
 
 void welcome_screen();
 void help_screen();
 long delete_screen();
 unsigned int add_task_todo_screen(char**);
 int add_task_reminder_screen(enum RemindFreq *, struct tm*);
+void print_task_screen(char **cell_data);
 
 #endif

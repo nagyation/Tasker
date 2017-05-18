@@ -21,6 +21,8 @@ enum RemindFreq{
     YEARLY
 };
 
+ static const char *REMINDER_FREQ_STR[] = { "Once","Daily","Weekly","Monthly","Yearly"};
+
 typedef struct task{
    
     long id;

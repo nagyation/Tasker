@@ -88,7 +88,7 @@ int insert_task(task tsk){
   sql  = (char*) malloc(sizeof(char)*(300 + strlen(tsk.todo)));
   int rc;
    sprintf(sql ,"INSERT INTO TASKS (TODO,REMINDER_TIME,ARCHIVE,HAS_REMINDER,REMINDER_FREQ) " \
-	   "VALUES (\"%s\",\"%s\",\"%d\",\"%d\",\"%d\");",tsk.todo,get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq);
+	   "VALUES (\"%s\",%s,\"%d\",\"%d\",\"%d\");",tsk.todo,get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq);
     rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
 
     if( rc != SQLITE_OK )
@@ -108,7 +108,7 @@ int edit_task(task tsk){
 char *sql;
   int rc;
   sql =(char*) malloc(sizeof(char)*100 + sizeof(char)*strlen(tsk.todo));
-  sprintf(sql , "UPDATE TASKS set TODO =\"%s\",CREATION_TIME=\"%s\",FINISHED_TIME=\"%s\",REMINDER_TIME=\"%s\",ARCHIVE=%d,HAS_REMINDER=%d,REMINDER_FREQ=%d  where ID=%ld;", tsk.todo,get_formated_timestamp(&tsk.creation_time),get_formated_timestamp(&tsk.finished_time),get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq,tsk.id);
+  sprintf(sql , "UPDATE TASKS set TODO =\"%s\",CREATION_TIME=\"%s\",FINISHED_TIME=%s,REMINDER_TIME=%s,ARCHIVE=%d,HAS_REMINDER=%d,REMINDER_FREQ=%d  where ID=%ld;", tsk.todo,get_formated_timestamp(&tsk.creation_time),get_formated_timestamp(&tsk.finished_time),get_formated_timestamp(&tsk.reminder_time),tsk.archive,tsk.has_reminder,tsk.remind_freq,tsk.id);
       rc = sqlite3_exec(db,sql,*callback,0,&err_msg);
       if( rc != SQLITE_OK )
       {

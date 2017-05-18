@@ -97,3 +97,20 @@ int add_task_reminder_screen(enum RemindFreq *remind_freq,struct tm *reminder_ti
     get_frequent_reminder(itxt,remind_freq);
     return 1;
 }
+
+void print_task_screen(char **cell_data)
+{
+
+    printf("---------------------------------------------------------\n");
+    printf("Todo:\n");
+    printf("--   %s\n\n",cell_data[TODO_COL]);
+    printf("Created At:\n");
+    printf("--   %s\n",cell_data[CREATION_TIME_COL]);
+    printf("Remind at:\n");
+    printf("--    %s\n",cell_data[REMINDER_TIME_COL] ? cell_data[REMINDER_TIME_COL]  : "No Reminder for this task");
+    printf("--    Repeated  %s\n",REMINDER_FREQ_STR[atoi(cell_data[REMINDER_FREQ])]);
+    printf("** Finished at:  %s\n",cell_data[FINISHED_TIME_COL]? cell_data[FINISHED_TIME_COL] : "Not yet");
+    printf("TASK ID %s\n", cell_data[ID_COL]);
+    printf("---------------------------------------------------------\n");
+
+}
